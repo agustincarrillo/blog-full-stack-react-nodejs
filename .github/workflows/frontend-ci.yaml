@@ -1,0 +1,42 @@
+# Se da un nombre al workflow.
+name: Blog Frontend CI
+
+# Se escuchan los eventos usando la clave on.
+on:
+  push:
+    branches:
+      - main
+  pull-request:
+    branches:
+      - main
+      
+# Se define un job que ejecturara el linter y contruira el frontend.
+jobs:
+  lint-and-build:
+    # Se ejecuta el job en un contenedor ubuntu-latest.
+    runs-on: ubuntu-latest
+    # Se puede usar la estrategia matrix para ejecutar las nuestras
+    # pruebas multiples veces con diferentes variables. Aqui queremos
+    # ejecutarla en multiples versiones de Node.js.
+    strategy: 
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    # Se definen los pasos dentro del job
+    steps:
+      # actions/checkout verifica el repositorio
+      - uses: actions/ckeckout@v3
+      # actions/setup-node configura Node.js dentro de un contenedor.
+      - name: Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+          # La opcion cache especifica un administrador de paquetes
+          # a ser usado por el cache de dependencias.
+          cache: 'npm
+      - name: Instalacion de dependencias.
+        run: npm install
+      - name: Ejecuta linter en el frontend
+        run: npm run lint
+      - name: Build frontend
+        run: npm run  build
+        

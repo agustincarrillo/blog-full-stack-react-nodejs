@@ -1,0 +1,39 @@
+name: Blog Backend CI
+on:
+  push:
+    branches:
+      - main
+  pull:
+    branches:
+      - main
+
+# Se define un job que construye y prueba el backend. Se pone el
+# directorio de trabajo como backend/ para ejecutar todas las 
+# acciones dentro de el.
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    defauts:
+      run:
+        working-directory: ./backend
+    steps:
+      # Se usan las mismas acciones que para el frontend para 
+      # verificar el repositorio y configurar Node.js.    
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      # Finalmente, se ejecuta linter en el backend 
+      # y se ejecutan las pruebas.
+      - name: Run linter on backend
+        run: npm run lint
+      - name: Run backend tests
+        run: npm test
+            
