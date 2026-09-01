@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  pull:
+  pull_request:
     branches:
       - main
 
@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x, 18.x, 20.x]
-    defauts:
+    defaults:
       run:
         working-directory: ./backend
     steps:
