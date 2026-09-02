@@ -2,7 +2,7 @@ export const getPosts = async (queryParams) => {
   // Se puede usar la funcion fetch para hacer priciones a un servidor.
   // Se utiliza la clase URLSearchParams para convertir un objeto en
   // query params validos.
-  console.log('BUSCA POSTS')
+  console.log('BUSCA LOS POSTS')
   const res = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/posts?` +
       new URLSearchParams(queryParams),
