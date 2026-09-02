@@ -1,0 +1,70 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { createPost } from '../api/posts.js'
+
+export function CreatePost() {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [contents, setContents] = useState('')
+
+  // Se usa queryClient para invalidar todos los querys iniciando
+  // con el query key 'posts'. Esto hace que se ejecute nuevamente
+  // el query 'posts'.
+  const queryClient = useQueryClient()
+  const createPostMutation = useMutation({
+    mutationFn: () => createPost({ title, author, contents }),
+    onSuccess: () => queryClient.invalidateQueries(['posts']),
+  })
+
+  // La funcion handleSubmit previene la accion default del submit
+  // (que refresca la pagina), y en su lugar llama .mutate() para
+  // ejecutar la mutación
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    createPostMutation.mutate()
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor='create-title'>Title</label>
+        <input
+          type='text'
+          name='create-title'
+          id='create-title'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
+      <br />
+      <div>
+        <label htmlFor='create-author'>Author</label>
+        <input
+          type='text'
+          name='create-author'
+          id='create-author'
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
+      </div>
+      <br />
+      <textarea
+        value={contents}
+        onChange={(e) => setContents(e.target.value)}
+      />
+      <br />
+      <br />
+      <input
+        type='submit'
+        value={createPostMutation.isPending ? 'Creating...' : 'Create'}
+        disabled={!title || createPostMutation.isPending}
+      />
+      {createPostMutation.isSuccess ? (
+        <>
+          <br />
+          Post created succesfully!
+        </>
+      ) : null}
+    </form>
+  )
+}

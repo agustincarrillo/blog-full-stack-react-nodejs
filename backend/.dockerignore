@@ -1,0 +1,4 @@
+# Folders and files that will be ignored by
+# the COPY instructions in the Dockerfile.
+node_modules
+.env*
