@@ -32,7 +32,7 @@ jobs:
           node-version: ${{ matrix.node_version }}
           # La opcion cache especifica un administrador de paquetes
           # a ser usado por el cache de dependencias.
-          cache: 'npm
+          cache: 'npm'
       - name: Instalacion de dependencias.
         run: npm install
       - name: Ejecuta linter en el frontend

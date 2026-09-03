@@ -1,7 +1,6 @@
-//import { MongoMemoryServer } from 'mongodb-memory-server'
-import mongoose from 'mongoose'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+//import mongoose from 'mongoose'
 
-/*
 export default async function globalSetup() {
   console.log('\nSetting up MongoDB Memory Server for testing (globalSetup)...')
   // Cuando se crea la instancia de MongoMemoryServer, se establece
@@ -17,9 +16,12 @@ export default async function globalSetup() {
   global.__MONGOINSTANCE = instance
 
   // Se guarda la URL para la conexion a la instancia de prueba.
-  //process.env.DATABASE_URL = instance.getUri()
-*/
+  process.env.DATABASE_URL = instance.getUri()
+}
 
+/* Este codigo creaba una conexión a una instancia de MongoDB local, 
+   pero ya no es necesario porque se logro crear la instancia de 
+   MongoDB Memory Server para las pruebas de jest.
 export default async function globalSetup() {
   console.log('\nSetting up MongoDB for testing (globalSetup)...')
 
@@ -36,3 +38,4 @@ export default async function globalSetup() {
 
   console.log('Instance Succesful connection.')
 }
+*/

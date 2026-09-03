@@ -1,5 +1,5 @@
 export const getPosts = async (queryParams) => {
-  // Se puede usar la funcion fetch para hacer priciones a un servidor.
+  // Se puede usar la funcion fetch para hacer peticiones a un servidor.
   // Se utiliza la clase URLSearchParams para convertir un objeto en
   // query params validos.
   console.log('BUSCA LOS POSTS')
