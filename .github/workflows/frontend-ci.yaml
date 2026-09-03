@@ -10,21 +10,21 @@ on:
     branches:
       - main
       
-# Se define un job que ejecturara el linter y contruira el frontend.
+# Se define un job que ejecutara el linter y construira el frontend.
 jobs:
   lint-and-build:
     # Se ejecuta el job en un contenedor ubuntu-latest.
     runs-on: ubuntu-latest
-    # Se puede usar la estrategia matrix para ejecutar las nuestras
-    # pruebas multiples veces con diferentes variables. Aqui queremos
-    # ejecutarla en multiples versiones de Node.js.
+    # Se puede usar la estrategia matrix para ejecutar las pruebas
+    # multiples veces con diferentes variables. Aqui queremos
+    # ejecutarlas en multiples versiones de Node.js.
     strategy: 
       matrix:
         node-version: [16.x, 18.x, 20.x]
     # Se definen los pasos dentro del job
     steps:
       # actions/checkout verifica el repositorio
-      - uses: actions/ckeckout@v3
+      - uses: actions/checkout@v3
       # actions/setup-node configura Node.js dentro de un contenedor.
       - name: Use Node.js ${{ matrix.node_version }}
         uses: actions/setup-node@v3
