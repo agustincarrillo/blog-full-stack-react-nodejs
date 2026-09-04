@@ -1,0 +1,77 @@
+name: Deploy Blog Application
+# Solo se ejecuta cuando se hace push a la rama main
+on:
+  push:
+    branches:
+      - main
+
+# Se define un job deploy en el que se configura el environment
+# a production y URL a la URL del frontend desplegado.
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    url: ${{ steps.deploy-frontend.outputs.url }}
+    steps:
+      - uses: actions/checkout@v3
+
+      # Nos conectamos a Docker Hub con las credenciales almacenadas
+      # en los secrets del repositorio.
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Nos conectamos a Google Cloud con las credenciales almacenadas
+      # en los secrets del repositorio.
+      - uses: google-github-actions/auth@v1
+        with:
+          service_account: ${{ secrets.GOOGLECLOUD_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GOOGLECLOUD_CREDENTIALS }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      # Construimos y subimos la imagen del backend a Docker Hub,
+      # utilizando docker/build-push-action, que construye y sube una
+      # imagen al registro de Docker.
+      - name: Build and push backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/blog-backend:latest
+
+      # Desplegamos el backend en Google Cloud Run, utilizando la
+      # acción google-github-actions/deploy-cloudrun.
+      - id: deploy-backend
+        name: Deploy backend to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: blog-backend
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/blog-backend:latest
+          region: ${{ secrets.GOOGLECLOUD_REGION }}
+
+      # Constuimos la imagen del frontend.
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend:latest
+          build-args: VITE_BACKEND_URL=${{ steps.deploy-backend.outputs.url }}/api/v1
+
+      # Desplegamos el frontend en dandole a este paso el ID deploy-frontend,
+      # para que la URL puda ser configurada propiamente.
+      - id: deploy-frontend
+        name: Deploy frontend to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: blog-frontend
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/blog-frontend:latest
+          region: ${{ secrets.GOOGLECLOUD_REGION }}
