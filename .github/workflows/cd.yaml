@@ -10,8 +10,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
-    url: ${{ steps.deploy-frontend.outputs.url }}
+    environment:
+      name: production
+      url: ${{ steps.deploy-frontend.outputs.url }}
     steps:
       - uses: actions/checkout@v3
 
