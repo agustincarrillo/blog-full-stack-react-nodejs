@@ -30,11 +30,6 @@ jobs:
           service_account: ${{ secrets.GOOGLECLOUD_SERVICE_ACCOUNT }}
           credentials_json: ${{ secrets.GOOGLECLOUD_CREDENTIALS }}
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
       # Construimos y subimos la imagen del backend a Docker Hub,
       # utilizando docker/build-push-action, que construye y sube una
       # imagen al registro de Docker.
@@ -49,7 +44,7 @@ jobs:
       # Desplegamos el backend en Google Cloud Run, utilizando la
       # acción google-github-actions/deploy-cloudrun.
       - id: deploy-backend
-        name: Deploy backend to Google Cloud Run
+        name: Deploy backend
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: blog-backend
@@ -69,7 +64,7 @@ jobs:
       # Desplegamos el frontend en dandole a este paso el ID deploy-frontend,
       # para que la URL puda ser configurada propiamente.
       - id: deploy-frontend
-        name: Deploy frontend to Google Cloud Run
+        name: Deploy frontend
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: blog-frontend
